@@ -31,9 +31,28 @@
                
                 Panel.ZIndex="10">
 
+<<<<<<< Updated upstream
             
 
         </Border>
+=======
+			<!-- Middle: Power -->
+			<Border Width="32" Height="32" CornerRadius="16" Background="White"
+			        Canvas.Left="39" Canvas.Top="59" Cursor="Hand" >
+				<TextBlock Text="&#xE7E8;" FontFamily="Segoe MDL2 Assets" FontSize="15"
+				           Foreground="#E5484D" HorizontalAlignment="Center"
+				           VerticalAlignment="Center"/>
+			</Border>
+
+			<!-- Bottom: Lock -->
+			<Border Width="32" Height="32" CornerRadius="16" Background="White"
+			        Canvas.Left="61" Canvas.Top="98" Cursor="Hand" MouseLeftButtonDown="Lock_Click">
+				<TextBlock Text="&#xE72E;" FontFamily="Segoe MDL2 Assets" FontSize="15"
+				           Foreground="#17627D" HorizontalAlignment="Center"
+				           VerticalAlignment="Center"/>
+			</Border>
+		</Canvas>
+>>>>>>> Stashed changes
 
     </Grid>
 
