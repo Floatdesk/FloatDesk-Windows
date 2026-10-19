@@ -1,7 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 using FloatingB.Core.Interfaces;
-using FloatingB.Infrastructure.Windows;
 
 namespace FloatingB
 {
@@ -9,12 +8,11 @@ namespace FloatingB
     {
         private readonly IWindowPositionService _windowPositionService;
 
-        public MainWindow()
+        public MainWindow(IWindowPositionService windowPositionService)
         {
             InitializeComponent();
 
-            _windowPositionService =
-                new WindowPositionService();
+            _windowPositionService = windowPositionService;
 
             Loaded += MainWindow_Loaded;
 
@@ -61,15 +59,26 @@ namespace FloatingB
 
             try
             {
-                // Allow the entire floating control
-                // to be dragged.
+                double startLeft = Left;
+                double startTop = Top;
+
+                // Remember if the menu was open, then close it
+                bool wasOpen = FloatingControl.IsMenuOpen;
+                FloatingControl.CloseMenu();
+
                 DragMove();
 
+                if (Left == startLeft && Top == startTop)
+                {
+                    // The window did not move, so it was a click.
+                    // If the menu was closed before, open it now.
+                    if (!wasOpen)
+                    {
+                        FloatingControl.ToggleMenu();
+                    }
+                }
 
-                // After releasing the mouse,
-                // snap to the nearest screen edge.
-                _windowPositionService
-                    .SnapToNearestEdge(this);
+                _windowPositionService.SnapToNearestEdge(this);
             }
             catch
             {

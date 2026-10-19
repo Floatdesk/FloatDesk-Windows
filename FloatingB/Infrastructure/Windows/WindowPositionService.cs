@@ -11,7 +11,7 @@ namespace FloatingB.Infrastructure.Windows
             Window window,
             ScreenEdge edge)
         {
-            var workArea = SystemParameters.WorkArea;
+            var workArea = MonitorWorkArea.For(window);
 
             switch (edge)
             {
@@ -44,7 +44,7 @@ namespace FloatingB.Infrastructure.Windows
 
         public void SnapToNearestEdge(Window window)
         {
-            var workArea = SystemParameters.WorkArea;
+            var workArea = MonitorWorkArea.For(window);
 
             double distanceToLeft =
                 Math.Abs(
@@ -100,7 +100,7 @@ namespace FloatingB.Infrastructure.Windows
         private void KeepVerticalPositionInsideScreen(
             Window window)
         {
-            var workArea = SystemParameters.WorkArea;
+            var workArea = MonitorWorkArea.For(window);
 
             double minimumTop =
                 workArea.Top;
@@ -123,7 +123,7 @@ namespace FloatingB.Infrastructure.Windows
         private void KeepHorizontalPositionInsideScreen(
             Window window)
         {
-            var workArea = SystemParameters.WorkArea;
+            var workArea = MonitorWorkArea.For(window);
 
             double minimumLeft =
                 workArea.Left;

@@ -5,11 +5,8 @@ namespace FloatingB.Core.Interfaces
 {
     public interface IWindowPositionService
     {
-        void PositionAtEdge(
-            Window window,
-            ScreenEdge edge);
+        void PositionAtEdge(Window window,ScreenEdge edge);
 
-        void SnapToNearestEdge(
-            Window window);
+        void SnapToNearestEdge(Window window);
     }
 }
