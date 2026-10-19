@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using FloatingB.Infrastructure.Settings;
 using FloatingB.Infrastructure.Windows;
 
 namespace FloatingB
@@ -12,7 +13,9 @@ namespace FloatingB
         {
             base.OnStartup(e);
 
-            var mainWindow = new MainWindow(new WindowPositionService());
+            var mainWindow = new MainWindow(
+                new WindowPositionService(),
+                new JsonSettingsService());
             mainWindow.Show();
         }
     }

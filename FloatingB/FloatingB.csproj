@@ -9,20 +9,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Lock\Services\" />
     <Folder Include="Features\Lock\ViewModels\" />
-    <Folder Include="Features\Power\Services\" />
     <Folder Include="Features\Power\ViewModels\" />
     <Folder Include="Features\Power\Views\" />
-    <Folder Include="Features\Screenshot\Services\" />
     <Folder Include="Features\Screenshot\ViewModels\" />
     <Folder Include="Features\Screenshot\Views\" />
     <Folder Include="Infrastructure\DependencyInjection\" />
     <Folder Include="Resources\Icons\" />
     <Folder Include="Resources\Images\" />
     <Folder Include="Shared\Controls\" />
-    <Folder Include="Shared\Converters\" />
-    <Folder Include="Shared\Helpers\" />
     <Folder Include="Shared\Styles\" />
   </ItemGroup>
 

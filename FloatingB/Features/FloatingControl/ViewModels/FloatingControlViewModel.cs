@@ -1,25 +1,53 @@
-﻿using System.Diagnostics;
+﻿using System.Windows.Media;
+using FloatingB.Core.Models;
+using FloatingB.Features.FloatingControl.Models;
+using FloatingB.Shared.Helpers;
 
 namespace FloatingB.Features.FloatingControl.ViewModels
 {
-    public class FloatingControlViewModel
+    public class FloatingControlViewModel : ObservableObject
     {
-        public string Icon => "Ω";
+        private string _icon = AppSettings.DefaultIcon;
 
-        public void Lock()
+        public string Icon
         {
-            Process.Start("rundll32.exe", "user32.dll,LockWorkStation");
+            get => _icon;
+            private set
+            {
+                if (SetProperty(ref _icon, value))
+                {
+                    OnPropertyChanged(nameof(IconFont));
+                }
+            }
         }
 
-        public void ShutDown()
-        {
-            Process.Start(new ProcessStartInfo("shutdown.exe", "/s /t 0") { CreateNoWindow = true });
-        }
+        public FontFamily IconFont => GlyphFont.For(Icon);
 
-        public void Screenshot()
+        /// <summary>
+        /// The buttons in the main menu, top first.
+        /// </summary>
+        public IReadOnlyList<MenuEntry> Entries { get; private set; } = Array.Empty<MenuEntry>();
+
+        public void Apply(AppSettings settings)
         {
-            // Opens the Snipping Tool (same as Win+Shift+S)
-            Process.Start(new ProcessStartInfo("ms-screenclip:") { UseShellExecute = true });
+            Icon = string.IsNullOrWhiteSpace(settings.MainIcon)
+                ? AppSettings.DefaultIcon
+                : settings.MainIcon;
+
+            var entries = new List<MenuEntry>();
+
+            foreach (var button in settings.Buttons)
+            {
+                var action = ActionCatalog.Find(button.ActionId);
+                if (action == null) continue;
+
+                string glyph = string.IsNullOrEmpty(button.Glyph) ? action.Glyph : button.Glyph;
+                entries.Add(new MenuEntry(action, glyph));
+
+                if (entries.Count == ActionCatalog.MaxButtons) break;
+            }
+
+            Entries = entries;
         }
     }
 }

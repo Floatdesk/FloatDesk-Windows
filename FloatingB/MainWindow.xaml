@@ -3,16 +3,22 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:views="clr-namespace:FloatingB.Features.FloatingControl.Views"
         Title="FloatingB"
-        Width="152" Height="176"
+        Width="128" Height="188"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
         Topmost="True"
         ShowInTaskbar="False"
         ResizeMode="NoResize">
-	<!-- Right-click the button to quit (the app has no taskbar entry) -->
+	<!-- Right-click the button for settings, or to quit (the app has no taskbar entry) -->
 	<Window.ContextMenu>
 		<ContextMenu>
+			<MenuItem Header="Customize…" Click="Customize_Click">
+				<MenuItem.Icon>
+					<TextBlock Text="&#xE713;" FontFamily="Segoe MDL2 Assets"/>
+				</MenuItem.Icon>
+			</MenuItem>
+			<Separator/>
 			<MenuItem Header="Exit FloatDesk" Click="Exit_Click">
 				<MenuItem.Icon>
 					<TextBlock Text="&#xE7E8;" FontFamily="Segoe MDL2 Assets"/>

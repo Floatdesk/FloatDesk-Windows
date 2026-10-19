@@ -1,47 +1,33 @@
 ﻿<UserControl x:Class="FloatingB.Features.FloatingControl.Views.FloatingControlView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             Width="152"
-             Height="176">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
 	<UserControl.Resources>
 
 		<SolidColorBrush x:Key="BrandBrush" Color="#17627D"/>
-		<SolidColorBrush x:Key="PowerBrush" Color="#E5484D"/>
+		<SolidColorBrush x:Key="RingBrush" Color="#0F3A4A"/>
 
 		<!-- Round white action button; fills with its accent colour (Tag) on hover -->
 		<Style x:Key="MenuButtonStyle" TargetType="Button">
-			<Setter Property="Width" Value="36"/>
-			<Setter Property="Height" Value="36"/>
+			<Setter Property="Width" Value="42"/>
+			<Setter Property="Height" Value="42"/>
 			<Setter Property="Cursor" Value="Hand"/>
 			<Setter Property="Focusable" Value="False"/>
-			<Setter Property="Tag" Value="{StaticResource BrandBrush}"/>
 			<Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+			<!-- The icon inherits Foreground from the Button itself -->
+			<Setter Property="Foreground" Value="{Binding Tag, RelativeSource={RelativeSource Self}}"/>
 			<Setter Property="Template">
 				<Setter.Value>
 					<ControlTemplate TargetType="Button">
 						<Grid>
-							<Ellipse x:Name="Glow"
-							         Margin="-4"
-							         Fill="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"
-							         Opacity="0"/>
-							<Ellipse x:Name="Bg" Fill="#F7FBFD">
-								<Ellipse.Effect>
-									<DropShadowEffect Color="#0B2A36" Opacity="0.25"
-									                  BlurRadius="6" ShadowDepth="1" Direction="270"/>
-								</Ellipse.Effect>
-							</Ellipse>
-							<ContentPresenter x:Name="Icon"
-							                  HorizontalAlignment="Center"
-							                  VerticalAlignment="Center"
-							                  TextElement.Foreground="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"/>
+							<Ellipse x:Name="Bg" Fill="White"/>
+							<ContentPresenter HorizontalAlignment="Center"
+							                  VerticalAlignment="Center"/>
 						</Grid>
 						<ControlTemplate.Triggers>
 							<Trigger Property="IsMouseOver" Value="True">
 								<Setter TargetName="Bg" Property="Fill"
 								        Value="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"/>
-								<Setter TargetName="Icon" Property="TextElement.Foreground" Value="White"/>
-								<Setter TargetName="Glow" Property="Opacity" Value="0.25"/>
 							</Trigger>
 							<Trigger Property="IsPressed" Value="True">
 								<Setter TargetName="Bg" Property="Opacity" Value="0.85"/>
@@ -50,76 +36,51 @@
 					</ControlTemplate>
 				</Setter.Value>
 			</Setter>
-		</Style>
-
-		<Style x:Key="GlyphStyle" TargetType="TextBlock">
-			<Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
-			<Setter Property="FontSize" Value="15"/>
-			<Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+			<Style.Triggers>
+				<Trigger Property="IsMouseOver" Value="True">
+					<Setter Property="Foreground" Value="White"/>
+				</Trigger>
+			</Style.Triggers>
 		</Style>
 
 	</UserControl.Resources>
 
-	<Canvas x:Name="Root" Width="152" Height="176" RenderTransformOrigin="0.5,0.5">
+	<!--
+		Drawn as if docked to the RIGHT edge of the screen: the edge is
+		x = 128. SetEdge() mirrors or rotates this for the other edges.
+	-->
+	<Canvas x:Name="Root" Width="128" Height="188">
 
-		<Canvas.RenderTransform>
-			<ScaleTransform x:Name="SideFlip" ScaleX="1"/>
-		</Canvas.RenderTransform>
-
-		<!-- Half-ring menu around the main button, hidden at the start -->
-		<Canvas x:Name="Menu" Width="152" Height="176"
-		        Visibility="Collapsed" Opacity="0"
-		        RenderTransformOrigin="0.776,0.5">
+		<!-- Ring menu around the main button, hidden at the start -->
+		<Canvas x:Name="Menu" Width="128" Height="188"
+		        Visibility="Collapsed" Opacity="0">
 
 			<Canvas.RenderTransform>
 				<ScaleTransform x:Name="MenuScale" ScaleX="0.4" ScaleY="0.4"/>
 			</Canvas.RenderTransform>
 
-			<Path Data="M 118,4 A 84,84 0 0 0 118,172 L 118,122 A 34,34 0 0 1 118,54 Z"
-			      Stroke="#40FFFFFF" StrokeThickness="1">
-				<Path.Fill>
-					<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-						<GradientStop Color="#F20F3A4A" Offset="0"/>
-						<GradientStop Color="#F2175E78" Offset="1"/>
-					</LinearGradientBrush>
-				</Path.Fill>
-				<Path.Effect>
-					<DropShadowEffect Color="Black" Opacity="0.3" BlurRadius="12" ShadowDepth="2" Direction="270"/>
-				</Path.Effect>
-			</Path>
+			<!-- Thick arc with round ends that sits behind the buttons -->
+			<Path x:Name="Ring"
+			      Stroke="{StaticResource RingBrush}"
+			      StrokeThickness="54"
+			      StrokeStartLineCap="Round"
+			      StrokeEndLineCap="Round"/>
 
-			<!-- Top: Screenshot -->
-			<Button x:Name="ScreenshotButton" Style="{StaticResource MenuButtonStyle}"
-			        Canvas.Left="71" Canvas.Top="20"
-			        ToolTip="Screenshot" Click="Screenshot_Click">
-				<TextBlock Text="&#xE722;" Style="{StaticResource GlyphStyle}"/>
-			</Button>
-
-			<!-- Middle: Power -->
-			<Button x:Name="PowerButton" Style="{StaticResource MenuButtonStyle}"
-			        Canvas.Left="42" Canvas.Top="70"
-			        Tag="{StaticResource PowerBrush}"
-			        ToolTip="Shut down" Click="Power_Click">
-				<TextBlock Text="&#xE7E8;" Style="{StaticResource GlyphStyle}"/>
-			</Button>
-
-			<!-- Bottom: Lock -->
-			<Button x:Name="LockButton" Style="{StaticResource MenuButtonStyle}"
-			        Canvas.Left="71" Canvas.Top="120"
-			        ToolTip="Lock" Click="Lock_Click">
-				<TextBlock Text="&#xE72E;" Style="{StaticResource GlyphStyle}"/>
-			</Button>
+			<Canvas x:Name="ButtonLayer"/>
 		</Canvas>
 
-		<!-- Main floating button -->
+		<!-- Main floating button. At rest it is pushed half past the edge. -->
 		<Grid x:Name="MainBody"
 		      Width="56" Height="56"
-		      Canvas.Left="90" Canvas.Top="60"
+		      Canvas.Left="66" Canvas.Top="66"
 		      Cursor="Hand"
 		      RenderTransformOrigin="0.5,0.5">
 
 			<Grid.RenderTransform>
-				<ScaleTransform x:Name="MainScale" ScaleX="1" ScaleY="1"/>
+				<TransformGroup>
+					<ScaleTransform x:Name="MainScale" ScaleX="1" ScaleY="1"/>
+					<TranslateTransform x:Name="PeekShift"/>
+				</TransformGroup>
 			</Grid.RenderTransform>
 
 			<Grid.Triggers>
@@ -127,11 +88,9 @@
 					<BeginStoryboard>
 						<Storyboard>
 							<DoubleAnimation Storyboard.TargetName="MainScale" Storyboard.TargetProperty="ScaleX"
-							                 To="1.08" Duration="0:0:0.15"/>
+							                 To="1.06" Duration="0:0:0.15"/>
 							<DoubleAnimation Storyboard.TargetName="MainScale" Storyboard.TargetProperty="ScaleY"
-							                 To="1.08" Duration="0:0:0.15"/>
-							<DoubleAnimation Storyboard.TargetName="Halo" Storyboard.TargetProperty="Opacity"
-							                 To="0.45" Duration="0:0:0.15"/>
+							                 To="1.06" Duration="0:0:0.15"/>
 						</Storyboard>
 					</BeginStoryboard>
 				</EventTrigger>
@@ -142,63 +101,39 @@
 							                 To="1" Duration="0:0:0.2"/>
 							<DoubleAnimation Storyboard.TargetName="MainScale" Storyboard.TargetProperty="ScaleY"
 							                 To="1" Duration="0:0:0.2"/>
-							<DoubleAnimation Storyboard.TargetName="Halo" Storyboard.TargetProperty="Opacity"
-							                 To="0" Duration="0:0:0.2"/>
 						</Storyboard>
 					</BeginStoryboard>
 				</EventTrigger>
 			</Grid.Triggers>
 
-			<!-- Soft glow that appears on hover -->
-			<Ellipse x:Name="Halo" Margin="-5" Opacity="0">
-				<Ellipse.Fill>
-					<RadialGradientBrush>
-						<GradientStop Color="#802BB3D9" Offset="0.75"/>
-						<GradientStop Color="#002BB3D9" Offset="1"/>
-					</RadialGradientBrush>
-				</Ellipse.Fill>
-			</Ellipse>
-
-			<!-- Body -->
-			<Ellipse Stroke="#55FFFFFF" StrokeThickness="1.5">
-				<Ellipse.Fill>
-					<LinearGradientBrush StartPoint="0.2,0" EndPoint="0.8,1">
-						<GradientStop Color="#2BB3D9" Offset="0"/>
-						<GradientStop Color="#17627D" Offset="1"/>
-					</LinearGradientBrush>
-				</Ellipse.Fill>
+			<Ellipse Fill="{StaticResource BrandBrush}" Stroke="White" StrokeThickness="2">
 				<Ellipse.Effect>
-					<DropShadowEffect Color="#0B2A36" Opacity="0.4" BlurRadius="14" ShadowDepth="3" Direction="270"/>
+					<DropShadowEffect Color="Black" Opacity="0.3" BlurRadius="10" ShadowDepth="2" Direction="270"/>
 				</Ellipse.Effect>
 			</Ellipse>
 
-			<!-- Glossy highlight -->
-			<Ellipse Width="40" Height="22" VerticalAlignment="Top" Margin="0,4,0,0" IsHitTestVisible="False">
-				<Ellipse.Fill>
-					<LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-						<GradientStop Color="#55FFFFFF" Offset="0"/>
-						<GradientStop Color="#00FFFFFF" Offset="1"/>
-					</LinearGradientBrush>
-				</Ellipse.Fill>
-			</Ellipse>
+			<!-- Counter-transform so the icon stays upright on every edge -->
+			<Grid x:Name="IconOrient" IsHitTestVisible="False"
+			      HorizontalAlignment="Center" VerticalAlignment="Center">
 
-			<!-- Icon: Ω when closed, ✕ when open -->
-			<Grid x:Name="IconHost" RenderTransformOrigin="0.5,0.5" IsHitTestVisible="False">
-				<Grid.RenderTransform>
-					<RotateTransform x:Name="IconRotate" Angle="0"/>
-				</Grid.RenderTransform>
+				<!-- Icon: the chosen icon when closed, ✕ when open -->
+				<Grid x:Name="IconHost" RenderTransformOrigin="0.5,0.5">
+					<Grid.RenderTransform>
+						<RotateTransform x:Name="IconRotate" Angle="0"/>
+					</Grid.RenderTransform>
 
-				<TextBlock x:Name="OmegaIcon"
-				           Text="{Binding Icon}"
-				           FontFamily="Segoe UI Semibold" FontSize="24"
-				           Foreground="White"
-				           HorizontalAlignment="Center" VerticalAlignment="Center"
-				           Margin="0,0,0,2"/>
+					<TextBlock x:Name="MainIcon"
+					           Text="{Binding Icon}"
+					           FontFamily="{Binding IconFont}"
+					           FontSize="26"
+					           Foreground="White"
+					           HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
-				<TextBlock x:Name="CloseIcon"
-				           Text="&#xE711;" FontFamily="Segoe MDL2 Assets" FontSize="16"
-				           Foreground="White" Opacity="0"
-				           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+					<TextBlock x:Name="CloseIcon"
+					           Text="&#xE711;" FontFamily="Segoe MDL2 Assets" FontSize="20"
+					           Foreground="White" Opacity="0"
+					           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+				</Grid>
 			</Grid>
 		</Grid>
 

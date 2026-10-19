@@ -42,7 +42,7 @@ namespace FloatingB.Infrastructure.Windows
             }
         }
 
-        public ScreenEdge SnapToNearestEdge(Window window)
+        public ScreenEdge GetNearestEdge(Window window)
         {
             var workArea = MonitorWorkArea.For(window);
 
@@ -91,8 +91,6 @@ namespace FloatingB.Infrastructure.Windows
             {
                 edge = ScreenEdge.Top;
             }
-
-            PositionAtEdge(window, edge);
 
             return edge;
         }
