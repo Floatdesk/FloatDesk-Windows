@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 using FloatingB.Core.Interfaces;
+using FloatingB.Core.Models;
 
 namespace FloatingB
 {
@@ -18,6 +19,14 @@ namespace FloatingB
 
             MouseLeftButtonDown +=
                 MainWindow_MouseLeftButtonDown;
+        }
+
+
+        private void Exit_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
         }
 
 
@@ -57,33 +66,39 @@ namespace FloatingB
             }
 
 
+            double startLeft = Left;
+            double startTop = Top;
+
+            // Remember if the menu was open, then close it
+            bool wasOpen = FloatingControl.IsMenuOpen;
+            FloatingControl.CloseMenu();
+
             try
             {
-                double startLeft = Left;
-                double startTop = Top;
-
-                // Remember if the menu was open, then close it
-                bool wasOpen = FloatingControl.IsMenuOpen;
-                FloatingControl.CloseMenu();
-
                 DragMove();
+            }
+            catch (InvalidOperationException)
+            {
+                // On a very quick click the button can already be
+                // released here. Treat it as a click, not a drag.
+            }
 
-                if (Left == startLeft && Top == startTop)
+            if (Left == startLeft && Top == startTop)
+            {
+                // The window did not move, so it was a click.
+                // If the menu was closed before, open it now.
+                if (!wasOpen)
                 {
-                    // The window did not move, so it was a click.
-                    // If the menu was closed before, open it now.
-                    if (!wasOpen)
-                    {
-                        FloatingControl.ToggleMenu();
-                    }
+                    FloatingControl.ToggleMenu();
                 }
 
-                _windowPositionService.SnapToNearestEdge(this);
+                return;
             }
-            catch
-            {
-                // Windows may cancel a drag operation.
-            }
+
+            var edge = _windowPositionService.SnapToNearestEdge(this);
+
+            // Open the menu away from the edge it is docked to
+            FloatingControl.SetOpensToRight(edge == ScreenEdge.Left);
         }
     }
 }

@@ -7,6 +7,6 @@ namespace FloatingB.Core.Interfaces
     {
         void PositionAtEdge(Window window,ScreenEdge edge);
 
-        void SnapToNearestEdge(Window window);
+        ScreenEdge SnapToNearestEdge(Window window);
     }
 }

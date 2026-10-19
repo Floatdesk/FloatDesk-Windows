@@ -42,7 +42,7 @@ namespace FloatingB.Infrastructure.Windows
             }
         }
 
-        public void SnapToNearestEdge(Window window)
+        public ScreenEdge SnapToNearestEdge(Window window)
         {
             var workArea = MonitorWorkArea.For(window);
 
@@ -77,24 +77,24 @@ namespace FloatingB.Infrastructure.Windows
                         distanceToRight,
                         distanceToTop));
 
+            ScreenEdge edge;
+
             if (minimumDistance == distanceToLeft)
             {
-                PositionAtEdge(
-                    window,
-                    ScreenEdge.Left);
+                edge = ScreenEdge.Left;
             }
             else if (minimumDistance == distanceToRight)
             {
-                PositionAtEdge(
-                    window,
-                    ScreenEdge.Right);
+                edge = ScreenEdge.Right;
             }
             else
             {
-                PositionAtEdge(
-                    window,
-                    ScreenEdge.Top);
+                edge = ScreenEdge.Top;
             }
+
+            PositionAtEdge(window, edge);
+
+            return edge;
         }
 
         private void KeepVerticalPositionInsideScreen(
